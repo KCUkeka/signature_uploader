@@ -593,20 +593,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                 ),
                 SizedBox(height: 10),
                 // NEW CHECKBOX ROW ADDED HERE
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      value: forceCopy,
-                      onChanged: (value) {
-                        setState(() {
-                          forceCopy = value ?? false;
-                        });
-                      },
-                    ),
-                    Text('Force overwrite duplicates'),
-                  ],
-                ),
+                Row(mainAxisAlignment: MainAxisAlignment.center),
                 SizedBox(height: 10),
                 ElevatedButton.icon(
                   onPressed: copyToDestination,
