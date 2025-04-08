@@ -108,6 +108,14 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
     }
   }
 
+  void clearSignature() {
+    setState(() {
+      selectedFile = null;
+      _renameController.clear();
+      statusMessage = 'Signature cleared';
+    });
+  }
+
   void checkImage(File imageFile) async {
     final bytes = await imageFile.readAsBytes();
     final decoded = img.decodeImage(bytes);
@@ -257,6 +265,8 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
     });
   }
 
+  // ---------------------------------Body------------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -278,10 +288,25 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ElevatedButton.icon(
-                  onPressed: pickImage,
-                  icon: Icon(Icons.upload_file),
-                  label: Text('Pick Signature Image'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: pickImage,
+                      icon: Icon(Icons.upload_file),
+                      label: Text('Pick Signature Image'),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton.icon(
+                      onPressed: selectedFile != null ? clearSignature : null,
+                      icon: Icon(Icons.clear),
+                      label: Text('Clear Signature'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 if (selectedFile != null) ...[
@@ -290,7 +315,6 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -331,12 +355,10 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
                   Image.file(selectedFile!, height: 100),
                   SizedBox(height: 20),
                 ],
-
                 Text(
                   statusMessage,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
@@ -353,8 +375,6 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   ),
                 ],
                 SizedBox(height: 30),
-
-                // Checking the server path that is going to get copied
                 ElevatedButton.icon(
                   onPressed: () {
                     showDialog(
@@ -449,7 +469,6 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   ),
                 ),
                 SizedBox(height: 10),
-
                 Text(
                   'Copy to provider destination:',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -469,7 +488,6 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   },
                 ),
                 SizedBox(height: 10),
-
                 ElevatedButton.icon(
                   onPressed: copyToDestination,
                   icon: Icon(Icons.copy),
