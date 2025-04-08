@@ -111,6 +111,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
     'Docs': r'R:\Signatures\Docs',
     "PA's": r'R:\Signatures\PAs',
     'Therapy': r'R:\Signatures\Therapy',
+    'Other': '',
   };
 
   String selectedProviderFolder = 'Docs';
@@ -574,7 +575,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Copy to provider destination:',
+                  'Save signature to:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 DropdownButton<String>(
@@ -591,6 +592,33 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                     }
                   },
                 ),
+                if (selectedProviderFolder == 'Other') ...[
+                  SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      String? selectedPath =
+                          await FilePicker.platform.getDirectoryPath();
+
+                      if (selectedPath != null) {
+                        setState(() {
+                          providerDestinations['Other'] = selectedPath;
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.folder_open),
+                    label: Text('Select Folder'),
+                  ),
+                  if ((providerDestinations['Other'] ?? '').isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Selected: ${providerDestinations['Other']}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14, color: Colors.black87),
+                      ),
+                    ),
+                ],
+
                 SizedBox(height: 10),
                 // NEW CHECKBOX ROW ADDED HERE
                 Row(mainAxisAlignment: MainAxisAlignment.center),
