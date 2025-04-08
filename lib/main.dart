@@ -85,6 +85,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
   };
 
   String selectedProviderFolder = 'Docs';
+  bool forceCopy = false;
 
   Future<void> pickImage() async {
     final result = await FilePicker.platform.pickFiles(
@@ -175,14 +176,58 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
       return;
     }
 
-    List<String> successfulCopies = [];
-    List<String> skippedDuplicates = [];
-    List<String> failedCopies = [];
-
+    // Ask if user wants to force copy if we detect duplicates
+    bool hasDuplicates = false;
     final List<String> allTargets = [
       ...fixedServerPaths,
       providerDestinations[selectedProviderFolder] ?? '',
     ];
+
+    // First check if any duplicates exist
+    for (final path in allTargets) {
+      if (path.isEmpty) continue;
+      final newFilePath = p.join(path, p.basename(selectedFile!.path));
+      final destFile = File(newFilePath);
+      if (destFile.existsSync()) {
+        hasDuplicates = true;
+        break;
+      }
+    }
+
+    if (hasDuplicates && !forceCopy) {
+      final shouldForceCopy = await showDialog<bool>(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: Text('Duplicate Files Found'),
+              content: Text(
+                'Some destinations already contain this file. Overwrite all duplicates?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text('Skip Duplicates'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text(
+                    'Overwrite All',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
+      );
+
+      if (shouldForceCopy == true) {
+        setState(() => forceCopy = true);
+      }
+    }
+
+    List<String> successfulCopies = [];
+    List<String> overwrittenCopies = [];
+    List<String> skippedDuplicates = [];
+    List<String> failedCopies = [];
 
     for (final path in allTargets) {
       if (path.isEmpty) continue;
@@ -197,7 +242,12 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
         final destFile = File(newFilePath);
 
         if (destFile.existsSync()) {
-          skippedDuplicates.add(path);
+          if (forceCopy) {
+            await selectedFile!.copy(newFilePath);
+            overwrittenCopies.add(path);
+          } else {
+            skippedDuplicates.add(path);
+          }
           continue;
         }
 
@@ -223,6 +273,16 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                     (p) => Text(
                       p,
                       style: TextStyle(color: Colors.green, fontSize: 12),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                ],
+                if (overwrittenCopies.isNotEmpty) ...[
+                  Text('🔄 Overwritten in:'),
+                  ...overwrittenCopies.map(
+                    (p) => Text(
+                      p,
+                      style: TextStyle(color: Colors.blue, fontSize: 12),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -261,11 +321,14 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
 
     setState(() {
       statusMessage =
-          '✅ Copy process completed. ${successfulCopies.length} copied, ${skippedDuplicates.length} skipped, ${failedCopies.length} failed.';
+          '✅ Copy process completed. ${successfulCopies.length} copied, '
+          '${overwrittenCopies.length} overwritten, '
+          '${skippedDuplicates.length} skipped, '
+          '${failedCopies.length} failed.';
     });
   }
 
-  // ---------------------------------Body------------------------------------
+  // -----------------------------------------------------------------Body-----------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -488,12 +551,28 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   },
                 ),
                 SizedBox(height: 10),
+                // NEW CHECKBOX ROW ADDED HERE
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Checkbox(
+                      value: forceCopy,
+                      onChanged: (value) {
+                        setState(() {
+                          forceCopy = value ?? false;
+                        });
+                      },
+                    ),
+                    Text('Force overwrite duplicates'),
+                  ],
+                ),
+                SizedBox(height: 10),
                 ElevatedButton.icon(
                   onPressed: copyToDestination,
                   icon: Icon(Icons.copy),
                   label: Text('Copy to All Destinations'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: forceCopy ? Colors.red : Colors.green,
                   ),
                 ),
               ],
