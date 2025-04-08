@@ -174,7 +174,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
     }
   }
 
-  void resizeImage() async {
+  Future<void> resizeImage() async {
     if (selectedFile == null) return;
 
     final bytes = await selectedFile!.readAsBytes();
@@ -189,7 +189,8 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
 
     final resized = img.copyResize(decoded, width: 180, height: 100);
     final newPath = p.setExtension(selectedFile!.path, '.jpg');
-    final resizedFile = File(newPath)..writeAsBytesSync(img.encodeJpg(resized));
+    final resizedFile = File(newPath);
+    await resizedFile.writeAsBytes(img.encodeJpg(resized));
 
     setState(() {
       selectedFile = resizedFile;
@@ -204,6 +205,16 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
         statusMessage = '⚠️ No file selected.';
       });
       return;
+    }
+
+    if (statusMessage.contains('Resize required')) {
+      await resizeImage(); // This will overwrite the selectedFile
+      if (!statusMessage.contains('180x100')) {
+        setState(() {
+          statusMessage = '❌ Resize failed. Aborting copy.';
+        });
+        return;
+      }
     }
 
     // Ask if user wants to force copy if we detect duplicates
@@ -636,7 +647,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                 ElevatedButton.icon(
                   onPressed: copyToDestination,
                   icon: Icon(Icons.copy),
-                  label: Text('Copy to All Destinations'),
+                  label: Text('Copy to Destinations'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: forceCopy ? Colors.red : Colors.green,
                   ),
