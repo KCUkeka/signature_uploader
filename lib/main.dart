@@ -5,7 +5,36 @@ import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 
 void main() {
-  runApp(SignatureUploaderApp());
+  runApp(RestartWidget(child: SignatureUploaderApp()));
+}
+
+class RestartWidget extends StatefulWidget {
+  final Widget child;
+  RestartWidget({required this.child});
+
+  static void restartApp(BuildContext context) {
+    final _RestartWidgetState? state =
+        context.findAncestorStateOfType<_RestartWidgetState>();
+    state?.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(key: key, child: widget.child);
+  }
 }
 
 class SignatureUploaderApp extends StatelessWidget {
@@ -586,6 +615,13 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: forceCopy ? Colors.red : Colors.green,
                   ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () => RestartWidget.restartApp(context),
+                  icon: Icon(Icons.refresh),
+                  label: Text('Restart App'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 ),
               ],
             ),
