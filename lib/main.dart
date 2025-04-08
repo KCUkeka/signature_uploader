@@ -448,7 +448,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                             final TextEditingController newPathController =
                                 TextEditingController();
                             return AlertDialog(
-                              title: Text('Fixed Server Paths'),
+                              title: Text('Fixed Paths'),
                               content: Container(
                                 width: double.maxFinite,
                                 height: 400,
@@ -514,6 +514,18 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                                 ),
                               ),
                               actions: [
+                                // New Clear All button
+                                TextButton(
+                                  onPressed: () {
+                                    setStateDialog(() {
+                                      fixedServerPaths.clear();
+                                    });
+                                  },
+                                  child: Text(
+                                    'Clear All',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
                                 TextButton(
                                   child: Text('Close'),
                                   onPressed: () => Navigator.of(context).pop(),
@@ -526,7 +538,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                     );
                   },
                   icon: Icon(Icons.list),
-                  label: Text('Show Server Paths'),
+                  label: Text('Show Paths'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueGrey,
                   ),
