@@ -581,8 +581,17 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                 DropdownButton<String>(
                   value: selectedProviderFolder,
                   items:
-                      providerDestinations.keys.map((dest) {
-                        return DropdownMenuItem(value: dest, child: Text(dest));
+                      providerDestinations.entries.map((entry) {
+                        return DropdownMenuItem(
+                          value: entry.key,
+                          child: Tooltip(
+                            message:
+                                entry.value.isEmpty
+                                    ? 'No path assigned'
+                                    : entry.value,
+                            child: Text(entry.key),
+                          ),
+                        );
                       }).toList(),
                   onChanged: (value) {
                     if (value != null) {
@@ -592,6 +601,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                     }
                   },
                 ),
+
                 if (selectedProviderFolder == 'Other') ...[
                   SizedBox(height: 10),
                   ElevatedButton.icon(
