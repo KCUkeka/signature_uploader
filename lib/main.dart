@@ -125,15 +125,15 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize the updater controller
     // Use the raw GitHub URL for your latest.json file
     _desktopUpdaterController = DesktopUpdaterController(
       appArchiveUrl: Uri.parse(
-        'https://raw.githubusercontent.com/KCUkeka/signature_uploader/main/releases/latest.json',
+        'https://raw.githubusercontent.com/KCUkeka/signature_uploader/main/releases/app-archive.json',
       ),
     );
-    
+
     // Auto-check on launch
     _autoCheckForUpdates();
   }
@@ -148,18 +148,22 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
   }
 
   // Manual check (call from button)
-  Future<void> _manualCheckAndMaybeDownload({bool showSnackbars = false}) async {
+  Future<void> _manualCheckAndMaybeDownload({
+    bool showSnackbars = false,
+  }) async {
     try {
       // First check if there's an update available
       await _desktopUpdaterController.checkVersion();
-      
+
       if (_desktopUpdaterController.needUpdate) {
         // If update is needed, you can download it
         await _desktopUpdaterController.downloadUpdate();
-        
+
         if (showSnackbars && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Update downloaded! Restart to apply.")),
+            const SnackBar(
+              content: Text("Update downloaded! Restart to apply."),
+            ),
           );
         }
       } else {
@@ -171,9 +175,9 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
       }
     } catch (e) {
       if (showSnackbars && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Update check failed: $e")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Update check failed: $e")));
       }
       debugPrint("Manual update check failed: $e");
     }
@@ -293,18 +297,18 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
         context: context,
         builder:
             (context) => AlertDialog(
-              title: Text('Duplicate Files Found'),
-              content: Text(
+              title: const Text('Duplicate Files Found'),
+              content: const Text(
                 'Some destinations already contain this file. Overwrite all duplicates?',
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text('Skip Duplicates'),
+                  child: const Text('Skip Duplicates'),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text(
+                  child: const Text(
                     'Overwrite All',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -381,7 +385,10 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   ...skippedDuplicates.map(
                     (p) => Text(
                       p,
-                      style: const TextStyle(color: Colors.orange, fontSize: 12),
+                      style: const TextStyle(
+                        color: Colors.orange,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -434,7 +441,8 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
             IconButton(
               icon: const Icon(Icons.system_update),
               tooltip: 'Check for Updates',
-              onPressed: () => _manualCheckAndMaybeDownload(showSnackbars: true),
+              onPressed:
+                  () => _manualCheckAndMaybeDownload(showSnackbars: true),
             ),
           ],
         ),
@@ -498,7 +506,9 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                               final ext = p.extension(selectedFile!.path);
                               final newPath = p.join(dir, '$value$ext');
                               try {
-                                final renamed = selectedFile!.renameSync(newPath);
+                                final renamed = selectedFile!.renameSync(
+                                  newPath,
+                                );
                                 setState(() {
                                   selectedFile = renamed;
                                   statusMessage =
@@ -506,7 +516,8 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                                 });
                               } catch (e) {
                                 setState(() {
-                                  statusMessage = '❌ Failed to rename image: $e';
+                                  statusMessage =
+                                      '❌ Failed to rename image: $e';
                                 });
                               }
                             }
@@ -559,8 +570,9 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                                             itemBuilder: (context, index) {
                                               final controller =
                                                   TextEditingController(
-                                                text: fixedServerPaths[index],
-                                              );
+                                                    text:
+                                                        fixedServerPaths[index],
+                                                  );
                                               return Row(
                                                 children: [
                                                   Expanded(
@@ -581,9 +593,8 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                                                     ),
                                                     onPressed: () {
                                                       setStateDialog(() {
-                                                        fixedServerPaths.removeAt(
-                                                          index,
-                                                        );
+                                                        fixedServerPaths
+                                                            .removeAt(index);
                                                       });
                                                     },
                                                   ),
@@ -601,7 +612,9 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                                         onSubmitted: (value) {
                                           if (value.trim().isNotEmpty) {
                                             setStateDialog(() {
-                                              fixedServerPaths.add(value.trim());
+                                              fixedServerPaths.add(
+                                                value.trim(),
+                                              );
                                               newPathController.clear();
                                             });
                                           }
@@ -624,7 +637,8 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                                   ),
                                   TextButton(
                                     child: const Text('Close'),
-                                    onPressed: () => Navigator.of(context).pop(),
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
                                   ),
                                 ],
                               );
@@ -646,17 +660,19 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                   ),
                   DropdownButton<String>(
                     value: selectedProviderFolder,
-                    items: providerDestinations.entries.map((entry) {
-                      return DropdownMenuItem(
-                        value: entry.key,
-                        child: Tooltip(
-                          message: entry.value.isEmpty
-                              ? 'No path assigned'
-                              : entry.value,
-                          child: Text(entry.key),
-                        ),
-                      );
-                    }).toList(),
+                    items:
+                        providerDestinations.entries.map((entry) {
+                          return DropdownMenuItem(
+                            value: entry.key,
+                            child: Tooltip(
+                              message:
+                                  entry.value.isEmpty
+                                      ? 'No path assigned'
+                                      : entry.value,
+                              child: Text(entry.key),
+                            ),
+                          );
+                        }).toList(),
                     onChanged: (value) {
                       if (value != null) {
                         setState(() {
@@ -686,7 +702,10 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                         child: Text(
                           'Selected: ${providerDestinations['Other']}',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                   ],
@@ -704,7 +723,9 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
                     onPressed: () => RestartWidget.restartApp(context),
                     icon: const Icon(Icons.refresh),
                     label: const Text('Restart App'),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
                   ),
                 ],
               ),

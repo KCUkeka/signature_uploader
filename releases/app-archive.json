@@ -1,0 +1,20 @@
+{
+  "appName": "Signature Uploader",
+  "description": "Upload provider signatures to multiple server locations",
+  "items": [
+    {
+      "version": "1.0.0",
+      "shortVersion": 1,
+      "changes": [
+        {
+          "type": "feat",
+          "message": "Initial release"
+        }
+      ],
+      "date": "2025-01-20",
+      "mandatory": false,
+      "url": "https://github.com/KCUkeka/signature_uploader/tree/main/releases/download/v1.0.0",
+      "platform": "windows"
+    }
+  ]
+}
