@@ -13,7 +13,7 @@
       ],
       "date": "2025-01-20",
       "mandatory": false,
-      "url": "https://github.com/KCUkeka/signature_uploader/tree/main/releases/download/v1.0.0",
+      "url": "https://raw.githubusercontent.com/KCUkeka/signature_uploader/main/releases/download/v1.0.0",
       "platform": "windows"
     }
   ]
