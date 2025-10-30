@@ -3,20 +3,6 @@
   "description": "Upload provider signatures to multiple server locations",
   "items": [
     {
-      "version": "1.0.2",
-      "shortVersion": 2,
-      "changes": [
-        {
-          "type": "chore",
-          "message": "testing the new feature"
-        }
-      ],
-      "date": "2025-04-11",
-      "mandatory": false,
-      "url": "https://raw.githubusercontent.com/KCUkeka/signature_uploader/main/releases/download/v1.0.2/signature_uploader.exe",
-      "platform": "windows"
-    },
-    {
       "version": "1.0.1",
       "shortVersion": 2,
       "changes": [
