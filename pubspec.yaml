@@ -2,6 +2,7 @@ name: signature_uploader
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+# This should match the version and shortversion in app-archive.json
 version: 1.0.1+2
 
 environment:
