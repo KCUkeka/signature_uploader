@@ -1,7 +1,6 @@
 name: signature_uploader
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+publish_to: 'none' 
 # This should match the version and shortversion in app-archive.json
 version: 1.0.1+2
 
@@ -12,7 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  desktop_updater: ^1.4.0
+  url_launcher: ^6.3.2
+  package_info_plus: ^9.0.0
 
 dev_dependencies:
   flutter_test:
