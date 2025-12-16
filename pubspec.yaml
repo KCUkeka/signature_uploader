@@ -3,7 +3,7 @@ description: "A new Flutter project."
 publish_to: 'none' 
 # This should match the version and shortversion in app-archive.json
 # Update every new app version
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: ^3.7.0
