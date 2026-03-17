@@ -134,10 +134,15 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
   @override
   void initState() {
     super.initState();
-    _initializePackageInfo(); // This sets _currentVersion dynamically
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _autoCheckForUpdates();
-    });
+    
+
+/////////////////////// Removed along with update method. /////////////////////////////////
+
+    // _initializePackageInfo(); // This sets _currentVersion dynamically
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _autoCheckForUpdates();
+    // }
+    // );
   }
 
   // This method is to get the version info
@@ -153,70 +158,74 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
     }
   }
 
-  Future<void> _autoCheckForUpdates() async {
-    try {
-      await _checkForUpdates(showDialogIfUpToDate: false);
-    } catch (e) {
-      debugPrint('Auto update check failed: $e');
-    }
-  }
+  
 
-  Future<void> _manualCheckForUpdates() async {
-    await _checkForUpdates(showDialogIfUpToDate: true);
-  }
+/////////////////////// Removed update method. /////////////////////////////////
 
-  Future<void> _checkForUpdates({bool showDialogIfUpToDate = true}) async {
-    if (_checkingForUpdates) return;
 
-    setState(() {
-      _checkingForUpdates = true;
-    });
+  // Future<void> _autoCheckForUpdates() async {
+  //   try {
+  //     await _checkForUpdates(showDialogIfUpToDate: false);
+  //   } catch (e) {
+  //     debugPrint('Auto update check failed: $e');
+  //   }
+  // }
+  // Future<void> _manualCheckForUpdates() async {
+  //   await _checkForUpdates(showDialogIfUpToDate: true);
+  // }
 
-    try {
-      final client = HttpClient();
-      final request = await client.getUrl(
-        Uri.parse(
-          'https://raw.githubusercontent.com/KCUkeka/signature_uploader/main/releases/app-archive.json',
-        ),
-      );
-      final response = await request.close();
+  // Future<void> _checkForUpdates({bool showDialogIfUpToDate = true}) async {
+  //   if (_checkingForUpdates) return;
 
-      if (response.statusCode != 200) {
-        throw HttpException(
-          'Failed to fetch update info: ${response.statusCode}',
-        );
-      }
+  //   setState(() {
+  //     _checkingForUpdates = true;
+  //   });
 
-      final jsonStr = await response.transform(utf8.decoder).join();
-      final jsonData = jsonDecode(jsonStr);
+  //   try {
+  //     final client = HttpClient();
+  //     final request = await client.getUrl(
+  //       Uri.parse(
+  //         'https://raw.githubusercontent.com/KCUkeka/signature_uploader/main/releases/app-archive.json',
+  //       ),
+  //     );
+  //     final response = await request.close();
 
-      final latestVersion = jsonData['items'][0]['version'];
+  //     if (response.statusCode != 200) {
+  //       throw HttpException(
+  //         'Failed to fetch update info: ${response.statusCode}',
+  //       );
+  //     }
 
-      // Use the dynamically fetched current version from package_info_plus
-      if (_isNewerVersion(latestVersion, _currentVersion)) {
-        final downloadUrl = jsonData['items'][0]['url'];
-        final changes = jsonData['items'][0]['changes'] as List;
-        _showUpdateDialog(downloadUrl, latestVersion, changes);
-      } else {
-        if (showDialogIfUpToDate && mounted) {
-          _showUpToDateDialog();
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Update check failed: $e")));
-      }
-      debugPrint("Update check failed: $e");
-    } finally {
-      if (mounted) {
-        setState(() {
-          _checkingForUpdates = false;
-        });
-      }
-    }
-  }
+  //     final jsonStr = await response.transform(utf8.decoder).join();
+  //     final jsonData = jsonDecode(jsonStr);
+
+  //     final latestVersion = jsonData['items'][0]['version'];
+
+  //     // Use the dynamically fetched current version from package_info_plus
+  //     if (_isNewerVersion(latestVersion, _currentVersion)) {
+  //       final downloadUrl = jsonData['items'][0]['url'];
+  //       final changes = jsonData['items'][0]['changes'] as List;
+  //       _showUpdateDialog(downloadUrl, latestVersion, changes);
+  //     } else {
+  //       if (showDialogIfUpToDate && mounted) {
+  //         _showUpToDateDialog();
+  //       }
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(
+  //         context,
+  //       ).showSnackBar(SnackBar(content: Text("Update check failed: $e")));
+  //     }
+  //     debugPrint("Update check failed: $e");
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         _checkingForUpdates = false;
+  //       });
+  //     }
+  //   }
+  // }
 
   bool _isNewerVersion(String latest, String current) {
     try {
@@ -592,18 +601,20 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
             child: Text('Upload Providers Signature'),
           ),
           actions: [
-            IconButton(
-              icon:
-                  _checkingForUpdates
-                      ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                      : const Icon(Icons.system_update),
-              tooltip: 'Check for Updates',
-              onPressed: _checkingForUpdates ? null : _manualCheckForUpdates,
-            ),
+            // Removed update method
+
+            // IconButton(
+            //   icon:
+            //       _checkingForUpdates
+            //           ? const SizedBox(
+            //             width: 20,
+            //             height: 20,
+            //             child: CircularProgressIndicator(strokeWidth: 2),
+            //           )
+            //           : const Icon(Icons.system_update),
+            //   tooltip: 'Check for Updates',
+            //   onPressed: _checkingForUpdates ? null : _manualCheckForUpdates,
+            // ),
           ],
         ),
       ),
